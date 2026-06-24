@@ -20,12 +20,13 @@ const Tab1: React.FC = () => {
 
   const [repositoryList, setRepositorylist] = React.useState<Repository[]>([]);
   const [loading, setLoading] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState("");
 
   const loadRepos = async () => {
     setLoading(true);
-    const reposData = await fetchRepositories();
-    setRepositorylist(reposData);
-    setLoading(false);
+    fetchRepositories().then((reposData) => setRepositorylist(reposData))
+      .catch((error) => setErrorMsg("Error al cargar repositorios." + error) )
+      .finally(() => setLoading(false));
   };
 
   useIonViewWillEnter(() => {
@@ -40,7 +41,7 @@ const Tab1: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent fullscreen>
+      <IonContent fullscreen className="ion-padding">
         <IonHeader collapse="condense">
           <IonToolbar>
             <IonTitle size="large">Repositorios</IonTitle>
@@ -55,11 +56,11 @@ const Tab1: React.FC = () => {
 
         {loading && <LoadingSpinner />}
 
-        {!loading && repositoryList.length === 0 && (
-          <IonText>
-            <p>No se pudieron cargar los repositorios</p>
-          </IonText>
-        )}
+        {errorMsg !== "" && 
+          (<IonText color="danger">
+            <p>{errorMsg}</p>
+          </IonText>)
+        }
       </IonContent>
     </IonPage>
   );
