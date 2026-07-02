@@ -1,7 +1,7 @@
 import { IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonContent, IonHeader, IonPage, IonText, IonTitle, IonToolbar, useIonViewDidEnter, useIonViewWillEnter } from '@ionic/react';
 import './Tab3.css';
 import React from 'react';
-import { fetchUserInfo } from '../services/GithubService';
+import { fetchUserInfo, hasGithubAuthFailure } from '../services/GithubService';
 import { GithubUser } from '../interfaces/GithubUser';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -11,10 +11,17 @@ const Tab3: React.FC = () => {
     const [userInfo, setUserInfo] = React.useState<GithubUser | null>(null);
 
     useIonViewWillEnter(() => {
+      if (hasGithubAuthFailure()) {
+        setErrorMsg("GitHub rechazó el token. Corrige el archivo .env y recarga la app.");
+        setUserInfo(null);
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       fetchUserInfo()
         .then((githubUser) => setUserInfo(githubUser))
-        .catch((error) => setErrorMsg("Error al cargar usuario" + error))
+        .catch((error) => setErrorMsg("Error al cargar usuario. " + error))
         .finally(() => setLoading(false));
     })
 
@@ -45,7 +52,7 @@ const Tab3: React.FC = () => {
             </IonCardContent>
           </IonCard>
         )}
-        {errorMsg != "" && <IonText color="danger">Esta Mal</IonText>}
+        {errorMsg != "" && <IonText color="danger">{errorMsg}</IonText>}
         </div>
         {loading && <LoadingSpinner/>}
       </IonContent>

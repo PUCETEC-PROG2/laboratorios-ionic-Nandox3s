@@ -5,8 +5,13 @@ import { pencil, trash } from 'ionicons/icons';
 import { Repository } from '../interfaces/Repository';
 
 
+type RepoItemProps = Repository & {
+    onEdit: () => void;
+    onDelete: () => void;
+};
 
-const ReporItem: React.FC<Repository> = (repository) => {
+
+const ReporItem: React.FC<RepoItemProps> = ({ onEdit, onDelete, ...repository }) => {
     return (
         <IonItemSliding>
             <IonItem>
@@ -22,11 +27,11 @@ const ReporItem: React.FC<Repository> = (repository) => {
             </IonItem>
 
             <IonItemOptions>
-                <IonItemOption color="light">
+                <IonItemOption color="light" onClick={onEdit}>
                     <IonIcon icon={pencil} slot='icon-only' />
                 </IonItemOption>
 
-                <IonItemOption color ="danger" >
+                <IonItemOption color="danger" onClick={onDelete}>
                     <IonIcon icon={trash} slot='icon-only' />
                 </IonItemOption>
             </IonItemOptions>

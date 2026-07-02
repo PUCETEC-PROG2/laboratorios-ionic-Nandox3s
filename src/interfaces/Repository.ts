@@ -4,7 +4,7 @@ export interface Repository {
     description: string;
     language: string;
     owner: {
-        log: string;
+        login: string;
         avatar_url:string;
     }
 }
